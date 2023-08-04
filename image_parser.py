@@ -2,6 +2,19 @@ from PIL import Image
 from sty import bg, rs
 from sty import Style, RgbBg
 
+def display_image(image,dim):
+    i = j = 0
+    while(i < dim):
+        j = 0
+        while(j < dim):
+            pixel_val = image[i * dim + j]
+            bg.pixel = Style(RgbBg(pixel_val, pixel_val, pixel_val))
+            pixel = bg.pixel + '  ' + bg.rs
+            print(pixel, end = '')
+            j += 1
+        print()
+        i += 1
+
 def get_image_pixel_array(filepath,dim):
     im = Image.open(filepath)
     image_array = []
@@ -16,5 +29,6 @@ def get_image_pixel_array(filepath,dim):
         i += 1
     return image_array
 
-image = get_image_pixel_array("assets/test3.jpg",16)
-print(image)
+dim = 16
+image = get_image_pixel_array("assets/test3.jpg",dim)
+display_image(image,dim)

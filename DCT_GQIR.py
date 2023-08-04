@@ -1,4 +1,4 @@
-from qiskit import QuantumRegister, QuantumCircuit, transpile, Aer
+from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit, transpile, Aer, execute
 from qiskit.tools.visualization import circuit_drawer, plot_histogram
 from qiskit.circuit.library.standard_gates.x import XGate
 import matplotlib.pyplot as plt
@@ -52,8 +52,8 @@ backendQasm = Aer.get_backend('qasm_simulator')
 pos_bits = math.log(dim,2)
 pixelMap = QuantumRegister(8,'pixelMap')
 position = QuantumRegister(2*pos_bits,'position')
-
-qc = QuantumCircuit(pixelMap, position)
+measure = ClassicalRegister(16,'measure')
+qc = QuantumCircuit(pixelMap, position, measure)
 qc.h(position)
 c8x_gate = XGate().control(8)
 
@@ -84,5 +84,14 @@ for pixel in image:
     
     pixel_id += 1
 
+qc.barrier()
+
+qc.measure(range(8),range(8))
+
+#simulate
+aer_sim = Aer.get_backend('aer_simulator')
+job = execute(qc,aer_sim,shots=16384)
+result_neqr = job.result()
+counts_neqr = result_neqr.get_counts()
 print(qc)
-print(image)
+print(counts_neqr)
