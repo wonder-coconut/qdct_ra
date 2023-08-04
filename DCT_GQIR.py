@@ -1,6 +1,9 @@
 from qiskit import QuantumRegister, QuantumCircuit, transpile, Aer
 from qiskit.tools.visualization import circuit_drawer, plot_histogram
+from qiskit.circuit.library.standard_gates.x import XGate
 import matplotlib.pyplot as plt
+from PIL import Image
+import math
 
 #helper functions
 def decimal_to_binary(num, limit):
@@ -23,43 +26,63 @@ def decimal_to_binary(num, limit):
         bin_s = '0' + bin_s
     return bin_s
 
+def get_image_pixel_array(filepath,dim):
+    im = Image.open(filepath)
+    image_array = []
+    i = j = 0
+    while(i < dim):
+        j = 0
+        while(j < dim):
+            colour_pixel = im.getpixel((j,i))
+            bw_pixel = int((colour_pixel[0] + colour_pixel[1] + colour_pixel[2])/3)
+            image_array.append(decimal_to_binary(bw_pixel,8))
+            j += 1
+        i += 1
+    return image_array
+
+#image initialization
+img_filepath = "assets/test3.jpg"
+dim = 16
+image = get_image_pixel_array(img_filepath,dim)
+
 #simulation backend
 backendQasm = Aer.get_backend('qasm_simulator')
 
-#image initialization
-imagearray = [75,10,25,37]
-image = []
-for pixel in imagearray:
-    image.append(decimal_to_binary(pixel,8))
-
 #circuit
+pos_bits = math.log(dim,2)
 pixelMap = QuantumRegister(8,'pixelMap')
-position = QuantumRegister(2,'pos')
+position = QuantumRegister(2*pos_bits,'position')
 
 qc = QuantumCircuit(pixelMap, position)
 qc.h(position)
+c8x_gate = XGate().control(8)
 
 pixel_id = 0
 for pixel in image:
     qc.barrier()
-    pixel_id_bin = decimal_to_binary(pixel_id,2)
+    pixel_id_bin = decimal_to_binary(pixel_id,2*pos_bits)
 
-    if(pixel_id_bin[0] == '1'):
-        qc.x(position[0])
-    if(pixel_id_bin[1] == '1'):
-        qc.x(position[1])
-    
+    pos_id = 0
+    while(pos_id < 2*pos_bits):
+        if(pixel_id_bin[pos_id] == '1'):
+            qc.x(position[pos_id])
+        pos_id += 1
+
     bin_id = 0
     for bin in pixel:
         if(bin == '1'):
-            qc.ccx(position[0],position[1],pixelMap[bin_id])
+            control_parameter = [*range(8, 8 + int(2*pos_bits), 1)]
+            control_parameter.append(bin_id)
+            qc.append(c8x_gate, control_parameter)
         bin_id += 1
     
-    if(pixel_id_bin[0] == '1'):
-        qc.x(position[0])
-    if(pixel_id_bin[1] == '1'):
-        qc.x(position[1])
-
+    pos_id = 0
+    while(pos_id < 2*pos_bits):
+        if(pixel_id_bin[pos_id] == '1'):
+            qc.x(position[pos_id])
+        pos_id += 1
+    
     pixel_id += 1
 
 print(qc)
+print(image)
