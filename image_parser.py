@@ -1,8 +1,10 @@
 from PIL import Image
 from sty import bg, rs
 from sty import Style, RgbBg
+from binary_helper import *
 
 def display_image(image,dim):
+#only works in terminal output
     i = j = 0
     while(i < dim):
         j = 0
@@ -15,7 +17,7 @@ def display_image(image,dim):
         print()
         i += 1
 
-def get_image_pixel_array(filepath,dim):
+def get_image_pixel_array(filepath,dim,binflag):
     im = Image.open(filepath)
     image_array = []
     i = j = 0
@@ -24,11 +26,27 @@ def get_image_pixel_array(filepath,dim):
         while(j < dim):
             colour_pixel = im.getpixel((j,i))
             bw_pixel = int((colour_pixel[0] + colour_pixel[1] + colour_pixel[2])/3)
+            if(binflag):
+                bw_pixel = decimal_to_binary(bw_pixel,8)
             image_array.append(bw_pixel)
             j += 1
         i += 1
     return image_array
 
-dim = 16
-image = get_image_pixel_array("assets/test3.jpg",dim)
-display_image(image,dim)
+def parse_to_image_array(data,dim,pos_bits):
+    data = data.split(':')
+    image_data = []
+    for token in data:
+        image_data.append(token[len(token) - 17:len(token) - 1])
+        
+    image_data.pop()
+
+    image_len = dim * dim
+    image = [0] * image_len
+    for pixel in image_data:
+        pixel = pixel[::-1]
+        pos = int(binary_to_dec(pixel[8:],2*pos_bits))
+        val = int(binary_to_dec(pixel[:8],8))
+        image[image_len - pos - 1] = val
+        
+    return image
