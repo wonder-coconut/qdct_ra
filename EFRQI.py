@@ -30,6 +30,8 @@ qc = QuantumCircuit(pixelMap, auxillary, position, measure)
 
 cnx_gate = XGate().control(2*pos_bits)
 
+qc.h(position)
+
 pixel_id = 0
 for pixel in image:
     qc.barrier()
@@ -71,5 +73,5 @@ aer_sim = Aer.get_backend('aer_simulator')
 job = execute(qc,aer_sim,shots=16384)
 result_neqr = job.result()
 counts_neqr = result_neqr.get_counts()
-print(qc)
+#print(qc)
 print(counts_neqr)

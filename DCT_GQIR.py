@@ -1,3 +1,5 @@
+#general dimension image dct gqir but meant to be used only for low dimension image (2,4,8,16)
+
 #packages
 from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit, transpile, Aer, execute
 from qiskit.tools.visualization import plot_histogram
@@ -10,65 +12,69 @@ from image_parser import *
 from binary_helper import *
 
 
-#image initialization
-img_filepath = "assets/test.jpg"
-dim = 16
-image = get_image_pixel_array(img_filepath,dim,binflag=True)
-#img_test = get_image_pixel_array(img_filepath,dim,binflag=False)
-#display_image(img_test,dim)
+def dct_driver():
+    #image initialization
+    img_filepath = "assets/test_64.jpg"
+    dim = 64
+    image = get_image_pixel_array(img_filepath,dim,binflag=True)
+    img_test = get_image_pixel_array(img_filepath,dim,binflag=False)
+    #display_image(img_test,dim)
+    #print(img_test)
 
-#simulation backend
-backendQasm = Aer.get_backend('qasm_simulator')
+    #simulation backend
+    backendQasm = Aer.get_backend('qasm_simulator')
 
-#circuit
-pos_bits = int(math.log(dim,2))
-pixelMap = QuantumRegister(8,'pixelMap')
-position = QuantumRegister(2*pos_bits,'position')
-classic_bits = 2*pos_bits + 8
-measure = ClassicalRegister(classic_bits,'measure')
-qc = QuantumCircuit(pixelMap, position, measure)
-qc.h(position)
-cnx_gate = XGate().control(2*pos_bits)
+    #circuit
+    pos_bits = int(math.log(dim,2))
+    pixelMap = QuantumRegister(8,'pixelMap')
+    position = QuantumRegister(2*pos_bits,'position')
+    classic_bits = 2*pos_bits + 8
+    measure = ClassicalRegister(classic_bits,'measure')
+    qc = QuantumCircuit(pixelMap, position, measure)
+    qc.h(position)
+    cnx_gate = XGate().control(2*pos_bits)
 
-pixel_id = 0
-for pixel in image:
+    pixel_id = 0
+    for pixel in image:
+        qc.barrier()
+        pixel_id_bin = decimal_to_binary(pixel_id,2*pos_bits)
+
+        pos_id = 0
+        while(pos_id < 2*pos_bits):
+            if(pixel_id_bin[pos_id] == '1'):
+                qc.x(position[pos_id])
+            pos_id += 1
+
+        bin_id = 0
+        for binary in pixel:
+            if(binary == '1'):
+                control_parameter = [*range(8, 8 + int(2*pos_bits), 1)]
+                control_parameter.append(bin_id)
+                qc.append(cnx_gate, control_parameter)
+            bin_id += 1
+
+        pos_id = 0
+        while(pos_id < 2*pos_bits):
+            if(pixel_id_bin[pos_id] == '1'):
+                qc.x(position[pos_id])
+            pos_id += 1
+
+        pixel_id += 1
+
     qc.barrier()
-    pixel_id_bin = decimal_to_binary(pixel_id,2*pos_bits)
 
-    pos_id = 0
-    while(pos_id < 2*pos_bits):
-        if(pixel_id_bin[pos_id] == '1'):
-            qc.x(position[pos_id])
-        pos_id += 1
+    qc.measure(range(8+2*pos_bits),range(8+2*pos_bits))
 
-    bin_id = 0
-    for binary in pixel:
-        if(binary == '1'):
-            control_parameter = [*range(8, 8 + int(2*pos_bits), 1)]
-            control_parameter.append(bin_id)
-            qc.append(cnx_gate, control_parameter)
-        bin_id += 1
-    
-    pos_id = 0
-    while(pos_id < 2*pos_bits):
-        if(pixel_id_bin[pos_id] == '1'):
-            qc.x(position[pos_id])
-        pos_id += 1
-    
-    pixel_id += 1
+    #simulate
+    aer_sim = Aer.get_backend('aer_simulator')
+    job = execute(qc,aer_sim,shots=16384)
+    result_neqr = job.result()
+    counts_neqr = result_neqr.get_counts()
+    #print(qc)
+    print(counts_neqr)
 
-qc.barrier()
+    #translate counts back to image
+    img_translate = parse_to_image_array(f'{counts_neqr}',dim,pos_bits) #pass counts data as string
+    display_image(img_translate,dim)
 
-qc.measure(range(16),range(16))
-
-#simulate
-aer_sim = Aer.get_backend('aer_simulator')
-job = execute(qc,aer_sim,shots=16384)
-result_neqr = job.result()
-counts_neqr = result_neqr.get_counts()
-#print(qc)
-#print(counts_neqr)
-
-#translate counts back to image
-img_translate = parse_to_image_array(f'{counts_neqr}',dim,pos_bits) #pass counts data as string
-#display_image(img_translate,dim)
+dct_driver()

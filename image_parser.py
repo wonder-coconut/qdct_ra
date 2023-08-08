@@ -19,13 +19,17 @@ def display_image(image,dim):
 
 def get_image_pixel_array(filepath,dim,binflag):
     im = Image.open(filepath)
+    fileformat = filepath[filepath.find('.'):]
     image_array = []
     i = j = 0
     while(i < dim):
         j = 0
         while(j < dim):
             colour_pixel = im.getpixel((j,i))
-            bw_pixel = int((colour_pixel[0] + colour_pixel[1] + colour_pixel[2])/3)
+            if(fileformat == '.png'):
+                bw_pixel = colour_pixel
+            else:
+                bw_pixel = int((colour_pixel[0] + colour_pixel[1] + colour_pixel[2])/3)
             if(binflag):
                 bw_pixel = decimal_to_binary(bw_pixel,8)
             image_array.append(bw_pixel)
@@ -34,11 +38,11 @@ def get_image_pixel_array(filepath,dim,binflag):
     return image_array
 
 def parse_to_image_array(data,dim,pos_bits):
+    pos_bits = int(pos_bits)
     data = data.split(':')
     image_data = []
     for token in data:
-        image_data.append(token[len(token) - 17:len(token) - 1])
-        
+        image_data.append(token[len(token) - (2*pos_bits + 8 + 1):len(token) - 1])
     image_data.pop()
 
     image_len = dim * dim
