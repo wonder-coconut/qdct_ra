@@ -78,8 +78,3 @@ def dct_driver(img_filepath, dim, qc_shots=0):
     img_translate = parse_to_image_array(f'{counts_neqr}',dim,pos_bits) #pass counts data as string
     print(img_translate)
     #display_image(img_translate,dim)
-
-if(len(sys.arv) == 4):
-    dct_driver(sys.argv[1],int(sys.argv[2]),int(sys.argv[3]))
-else
-    dct_driver(sys.argv[1],int(sys.argv[2]))

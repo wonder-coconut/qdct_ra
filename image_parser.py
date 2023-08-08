@@ -2,6 +2,23 @@ from PIL import Image
 from sty import bg, rs
 from sty import Style, RgbBg
 from binary_helper import *
+import numpy
+
+def write_image_to_file(image,dim):
+    pixels = []
+    i = j = 0
+    while(i < dim):
+        pixels.append([])
+        j = 0
+        while(j < dim):
+            pixels[i].append(image[i * dim + j])
+            j += 1
+        i += 1
+    
+    img_array = numpy.array(pixels, dtype=numpy.uint8)
+    
+    new_image = Image.fromarray(img_array)
+    new_image.save('assets/output_test_64.png')
 
 def display_image(image,dim):
 #only works in terminal output
