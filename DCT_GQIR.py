@@ -6,20 +6,19 @@ from qiskit.tools.visualization import plot_histogram
 from qiskit.circuit.library.standard_gates.x import XGate
 import matplotlib.pyplot as plt
 import math
+import sys
 
 #source scripts
 from image_parser import *
 from binary_helper import *
 
 
-def dct_driver():
+def dct_driver(img_filepath, dim, qc_shots=0):
     #image initialization
-    img_filepath = "assets/test_64.jpg"
-    dim = 64
     image = get_image_pixel_array(img_filepath,dim,binflag=True)
     img_test = get_image_pixel_array(img_filepath,dim,binflag=False)
     #display_image(img_test,dim)
-    #print(img_test)
+    print(img_test)
 
     #simulation backend
     backendQasm = Aer.get_backend('qasm_simulator')
@@ -66,15 +65,21 @@ def dct_driver():
     qc.measure(range(8+2*pos_bits),range(8+2*pos_bits))
 
     #simulate
+    if(qc_shots == 0):
+        qc_shots = dim*dim*8 #loss in dead pixels due to insufficient shots
     aer_sim = Aer.get_backend('aer_simulator')
-    job = execute(qc,aer_sim,shots=16384)
+    job = execute(qc,aer_sim,shots=qc_shots)
     result_neqr = job.result()
     counts_neqr = result_neqr.get_counts()
     #print(qc)
-    print(counts_neqr)
+    #print(counts_neqr)
 
     #translate counts back to image
     img_translate = parse_to_image_array(f'{counts_neqr}',dim,pos_bits) #pass counts data as string
-    display_image(img_translate,dim)
+    print(img_translate)
+    #display_image(img_translate,dim)
 
-dct_driver()
+if(len(sys.arv) == 4):
+    dct_driver(sys.argv[1],int(sys.argv[2]),int(sys.argv[3]))
+else
+    dct_driver(sys.argv[1],int(sys.argv[2]))

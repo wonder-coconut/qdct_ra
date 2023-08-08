@@ -1,0 +1,6 @@
+1. beyond 64 by 64 acquiring job results dimension
+2. shots mess with image giving dead pixels at higher dimensions, lesser shots give more dead pixels
+    test:
+    dim 64 : 64 * 64 * 7
+    dim 32 : 64 * 64 * 8
+    dim 16 : 16 * 16 * 7
