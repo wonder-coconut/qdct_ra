@@ -13,12 +13,12 @@ from image_parser import *
 from binary_helper import *
 
 
-def dct_driver(img_filepath, dim, qc_shots=0):
+def neqr(img_filepath, dim, qc_shots=0):
     #image initialization
     image = get_image_pixel_array(img_filepath,dim,binflag=True)
     img_test = get_image_pixel_array(img_filepath,dim,binflag=False)
-    #display_image(img_test,dim)
-    print(img_test)
+    display_image(img_test,dim)
+    #print(img_test)
 
     #simulation backend
     backendQasm = Aer.get_backend('qasm_simulator')
@@ -76,5 +76,6 @@ def dct_driver(img_filepath, dim, qc_shots=0):
 
     #translate counts back to image
     img_translate = parse_to_image_array(f'{counts_neqr}',dim,pos_bits) #pass counts data as string
-    print(img_translate)
-    #display_image(img_translate,dim)
+    #print(img_translate)
+    write_image_to_file(img_translate,dim)
+    display_image(img_translate,dim)

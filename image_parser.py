@@ -4,7 +4,7 @@ from sty import Style, RgbBg
 from binary_helper import *
 import numpy
 
-def write_image_to_file(image,dim):
+def write_image_to_file(image,dim,filepath):
     pixels = []
     i = j = 0
     while(i < dim):
@@ -18,7 +18,7 @@ def write_image_to_file(image,dim):
     img_array = numpy.array(pixels, dtype=numpy.uint8)
     
     new_image = Image.fromarray(img_array)
-    new_image.save('assets/output_test_64.png')
+    new_image.save(filepath)
 
 def display_image(image,dim):
 #only works in terminal output
@@ -34,7 +34,7 @@ def display_image(image,dim):
         print()
         i += 1
 
-def get_image_pixel_array(filepath,dim,binflag):
+def get_image_pixel_array(filepath, dim, binflag):
     im = Image.open(filepath)
     fileformat = filepath[filepath.find('.'):]
     image_array = []
