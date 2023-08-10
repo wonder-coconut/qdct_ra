@@ -13,7 +13,7 @@ from image_parser import *
 from binary_helper import *
 
 
-def neqr(img_filepath, dim, qc_shots=0):
+def neqr_gen_qc(img_filepath, dim):
     #image initialization
     image = get_image_pixel_array(img_filepath,dim,binflag=True)
     img_test = get_image_pixel_array(img_filepath,dim,binflag=False)
@@ -61,22 +61,23 @@ def neqr(img_filepath, dim, qc_shots=0):
         pixel_id += 1
 
     qc.barrier()
-
-    qc.measure(range(8+2*pos_bits),range(8+2*pos_bits))
-
-    #simulate
+    return qc
+    
+def simulate(qc,dim,qc_shots=0):
+    qc.measure(range(int(qc.width()/2)),range(int(qc.width()/2)))
     if(qc_shots == 0):
-        qc_shots = dim*dim*8 #loss in dead pixels due to insufficient shots
+        qc_shots = dim*dim*9 #loss in dead pixels due to insufficient shots
     aer_sim = Aer.get_backend('aer_simulator')
     job = execute(qc,aer_sim,shots=qc_shots)
     result_neqr = job.result()
     counts_neqr = result_neqr.get_counts()
-    #print(qc)
-    #print(counts_neqr)
+    plot_histogram(counts_neqr)
+    return counts_neqr
 
+def translate_to_image(counts_neqr,dim):
     #translate counts back to image
+    pos_bits = int(math.log(dim,2))
     img_translate = parse_to_image_array(f'{counts_neqr}',dim,pos_bits) #pass counts data as string
     #print(img_translate)
-    op_filepath = f"assets/output_{dim}.jpg"
+    op_filepath = f"assets/output_{dim}_neqr.png"
     write_image_to_file(img_translate,dim,op_filepath)
-    display_image(img_translate,dim)

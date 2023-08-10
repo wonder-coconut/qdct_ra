@@ -55,7 +55,6 @@ def get_image_pixel_array(filepath, dim, binflag):
     return image_array
 
 def parse_to_image_array(data,dim,pos_bits):
-    pos_bits = int(pos_bits)
     data = data.split(':')
     image_data = []
     for token in data:
