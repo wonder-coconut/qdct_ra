@@ -34,7 +34,7 @@ def display_image(image,dim):
         print()
         i += 1
 
-def get_image_pixel_array(filepath, dim, binflag):
+def get_image_pixel_array(filepath, dim):
     im = Image.open(filepath)
     fileformat = filepath[filepath.find('.'):]
     image_array = []
@@ -47,8 +47,6 @@ def get_image_pixel_array(filepath, dim, binflag):
                 bw_pixel = colour_pixel
             else:
                 bw_pixel = int((colour_pixel[0] + colour_pixel[1] + colour_pixel[2])/3)
-            if(binflag):
-                bw_pixel = decimal_to_binary(bw_pixel,8)
             image_array.append(bw_pixel)
             j += 1
         i += 1
