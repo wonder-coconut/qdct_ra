@@ -3,9 +3,12 @@ from qiskit.tools.visualization import plot_histogram, plot_bloch_multivector
 import matplotlib.pyplot as plt
 import math
 
-image = [25,50,75,255]
-theta = [(pixel * math.pi/2)/256 for pixel in image]
+from binary_helper import binary_to_dec
 
+image = [0,100,200,255]
+print(f"original image: {image}")
+theta = [(pixel * math.pi/2)/256 for pixel in image]
+#theta = [0,math.pi/8,math.pi/4,math.pi/2]
 qc = QuantumCircuit(3,3)
 
 qc.h(0)
@@ -52,17 +55,56 @@ qc.cry(-theta[3],1,2)
 qc.cx(0,1)
 qc.cry(theta[3],1,2)
 
-#qc.measure([2],[2])
+qc.measure(range(3),range(3))
 
-print(qc)
-print(theta)
+#print(qc)
+#print(theta)
 
 aer_sim = Aer.get_backend('qasm_simulator')
-qc.save_statevector()
-statevector = aer_sim.run(qc)
-statevector = statevector.result()
+#qc.save_statevector()
+#statevector = aer_sim.run(qc)
+#statevector = statevector.result()
 
-#job = execute(qc,aer_sim,shots=65536)
-#result_neqr = job.result()
-#counts_neqr = result_neqr.get_counts()
-#print(counts_neqr)
+job = execute(qc,aer_sim,shots=65536)
+result_neqr = job.result()
+counts_neqr = result_neqr.get_counts()
+plot_histogram(counts_neqr)
+print(counts_neqr)
+
+counts = f'{counts_neqr}'
+counts = counts[1:len(counts)-1].split(',')
+shots = 65536
+dim = 2
+limit = len(counts)
+image_data = [0 for i in range(dim * dim)]
+
+i = 0
+j = 0
+while(i < limit):
+    counts[i] = (counts[i]).strip()
+    binary = counts[i][1:4]
+    state = int(binary[0])
+    pos = binary[1:len(binary)]
+    pos = pos[::-1]
+    amp = int(counts[i][counts[i].rfind(':') + 1:len(counts[i])].strip())/shots
+    index = binary_to_dec(pos,2)
+    if(image_data[index] == 0):
+        image_data[index] = {}
+        image_data[index][0] = 0
+        image_data[index][1] = 0
+    image_data[index][state] = amp
+    i += 1
+
+image = []
+for pixel in image_data:
+    a = pixel[0]
+    b = pixel[1]
+    s = math.sqrt(a*a + b*b)
+    a = a/s
+    b = b/s
+
+    theta = math.acos(a)
+    pixel_val = theta/(math.pi/2) * 256
+    image.append(round(pixel_val))
+
+print(f"final image: {image}")
