@@ -15,8 +15,8 @@ from binary_helper import *
 
 def neqr_gen_qc(img_filepath, dim):
     #image initialization
-    image = get_image_pixel_array(img_filepath,dim,binflag=True)
-    img_test = get_image_pixel_array(img_filepath,dim,binflag=False)
+    image = get_image_pixel_array(img_filepath,dim,)
+    img_test = get_image_pixel_array(img_filepath,dim)
     #display_image(img_test,dim)
     #print(img_test)
 
@@ -36,6 +36,7 @@ def neqr_gen_qc(img_filepath, dim):
     pixel_id = 0
     for pixel in image:
         qc.barrier()
+        pixel_bin = decimal_to_binary(pixel,8)
         pixel_id_bin = decimal_to_binary(pixel_id,2*pos_bits)
 
         pos_id = 0
@@ -45,7 +46,7 @@ def neqr_gen_qc(img_filepath, dim):
             pos_id += 1
 
         bin_id = 0
-        for binary in pixel:
+        for binary in pixel_bin:
             if(binary == '1'):
                 control_parameter = [*range(8, 8 + int(2*pos_bits), 1)]
                 control_parameter.append(bin_id)
@@ -64,7 +65,8 @@ def neqr_gen_qc(img_filepath, dim):
     return qc
     
 def simulate(qc,dim,qc_shots=0):
-    qc.measure(range(int(qc.width()/2)),range(int(qc.width()/2)))
+    #qc.measure(range(int(qc.width()/2)),range(int(qc.width()/2)))
+    qc.measure(range(8),range(8))
     if(qc_shots == 0):
         qc_shots = dim*dim*9 #loss in dead pixels due to insufficient shots
     aer_sim = Aer.get_backend('aer_simulator')
@@ -72,6 +74,7 @@ def simulate(qc,dim,qc_shots=0):
     result_neqr = job.result()
     counts_neqr = result_neqr.get_counts()
     plot_histogram(counts_neqr)
+    #plt.show()
     return counts_neqr
 
 def translate_to_image(counts_neqr,dim):
@@ -81,3 +84,11 @@ def translate_to_image(counts_neqr,dim):
     #print(img_translate)
     op_filepath = f"assets/output_{dim}_neqr.png"
     write_image_to_file(img_translate,dim,op_filepath)
+
+
+img_filepath = "assets/test_8.jpg"
+dim = 8
+qc = neqr_gen_qc(img_filepath,dim)
+counts = simulate(qc,dim,0)
+
+print(counts)

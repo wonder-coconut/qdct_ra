@@ -37,6 +37,8 @@ def load(image,qc,i,dim,register_data):
             qc.append(cnx_gate, control_parameter)
          bin_id += 1
       
+      
+      
       i_id = 0
       while(i_id < 2*pos_bits):
          if(pixel_id_bin[i_id] == '1'):
