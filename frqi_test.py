@@ -1,14 +1,16 @@
 from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit, transpile, Aer, execute
-from qiskit.tools.visualization import plot_histogram, plot_bloch_multivector
+from qiskit.tools.visualization import plot_distribution, plot_bloch_multivector
 import matplotlib.pyplot as plt
 import math
 
 from binary_helper import binary_to_dec
 
-image = [0,100,200,255]
+#image = [0,100,200,255]
+#theta = [(pixel * math.pi/2)/256 for pixel in image]
+theta = [math.pi/2,math.pi/4,math.pi/8,0]
+image = [(angle*256)/(math.pi/2) for angle in theta]
 print(f"original image: {image}")
-theta = [(pixel * math.pi/2)/256 for pixel in image]
-#theta = [0,math.pi/8,math.pi/4,math.pi/2]
+
 qc = QuantumCircuit(3,3)
 
 qc.h(0)
@@ -68,8 +70,8 @@ aer_sim = Aer.get_backend('qasm_simulator')
 job = execute(qc,aer_sim,shots=65536)
 result_neqr = job.result()
 counts_neqr = result_neqr.get_counts()
-plot_histogram(counts_neqr)
-print(counts_neqr)
+plot_distribution(counts_neqr)
+plt.show()
 
 counts = f'{counts_neqr}'
 counts = counts[1:len(counts)-1].split(',')
@@ -79,7 +81,6 @@ limit = len(counts)
 image_data = [0 for i in range(dim * dim)]
 
 i = 0
-j = 0
 while(i < limit):
     counts[i] = (counts[i]).strip()
     binary = counts[i][1:4]
@@ -102,9 +103,10 @@ for pixel in image_data:
     s = math.sqrt(a*a + b*b)
     a = a/s
     b = b/s
-
-    theta = math.acos(a)
-    pixel_val = theta/(math.pi/2) * 256
+    theta1 = math.acos(math.sqrt(a))
+    theta2 = math.asin(math.sqrt(b))
+    theta_net = (theta1 + theta2)/2
+    pixel_val = theta_net/(math.pi/2) * 256
     image.append(round(pixel_val))
 
 print(f"final image: {image}")
