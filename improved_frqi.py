@@ -18,6 +18,8 @@ def mcry(theta):
     mcry.cx(mcry_reg[2],mcry_reg[1])
     mcry.cry(theta,mcry_reg[1],mcry_reg[0])
 
+    print(mcry)
+
     mcry_inst = mcry.to_instruction()
     return mcry_inst
 
@@ -27,7 +29,6 @@ def mary(theta):
     theta_s = '%.2f'%theta
     mary_reg = QuantumRegister(3)
     mary = QuantumCircuit(mary_reg, name=f'mary({theta_s})')
-    theta /= 2
 
     mary.ry(theta,mary_reg[0])
     mary.cx(mary_reg[1],mary_reg[0])
@@ -133,9 +134,10 @@ def frqi_decode(counts_frqi,shots,dim):
 
 theta = [math.pi/16,math.pi/8,math.pi/4,math.pi/2]
 image = [int((angle*256*2)/math.pi) for angle in theta]
-shots = 8192
+shots = 16384
 print(image)
-frqi_qc = improved_frqi(theta)
+frqi_qc = regular_frqi(theta)
+print(frqi_qc)
 counts = simulate(frqi_qc,shots)
 image = frqi_decode(counts,shots,2)
 print(image)
