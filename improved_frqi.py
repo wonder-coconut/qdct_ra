@@ -11,14 +11,12 @@ def mcry(theta):
     theta_s = '%.2f'%theta
     mcry_reg = QuantumRegister(3)
     mcry = QuantumCircuit(mcry_reg, name=f'mcry({theta_s})')
-
+    
     mcry.cry(theta,mcry_reg[2],mcry_reg[0])
     mcry.cx(mcry_reg[2],mcry_reg[1])
     mcry.cry(-theta,mcry_reg[1],mcry_reg[0])
     mcry.cx(mcry_reg[2],mcry_reg[1])
     mcry.cry(theta,mcry_reg[1],mcry_reg[0])
-
-    print(mcry)
 
     mcry_inst = mcry.to_instruction()
     return mcry_inst
@@ -29,6 +27,8 @@ def mary(theta):
     theta_s = '%.2f'%theta
     mary_reg = QuantumRegister(3)
     mary = QuantumCircuit(mary_reg, name=f'mary({theta_s})')
+
+    theta /= 2
 
     mary.ry(theta,mary_reg[0])
     mary.cx(mary_reg[1],mary_reg[0])
@@ -47,6 +47,7 @@ def regular_frqi(theta):
     pos_reg = QuantumRegister(2,'position')
     grayscale_reg = QuantumRegister(1,'grayscale')
     c_reg = ClassicalRegister(3)
+
     qc = QuantumCircuit(grayscale_reg,pos_reg,c_reg)
     qc.h(pos_reg)
     qc.append(mcry(theta[0]),[grayscale_reg[0],pos_reg[0],pos_reg[1]])
@@ -68,6 +69,7 @@ def improved_frqi(theta):
     pos_reg = QuantumRegister(2,'position')
     grayscale_reg = QuantumRegister(1,'grayscale')
     c_reg = ClassicalRegister(3)
+
     qc = QuantumCircuit(grayscale_reg,pos_reg,c_reg)
     qc.h(pos_reg)
     qc.append(mary(theta[0]),[grayscale_reg[0],pos_reg[0],pos_reg[1]])
@@ -137,7 +139,6 @@ image = [int((angle*256*2)/math.pi) for angle in theta]
 shots = 16384
 print(image)
 frqi_qc = regular_frqi(theta)
-print(frqi_qc)
 counts = simulate(frqi_qc,shots)
 image = frqi_decode(counts,shots,2)
 print(image)

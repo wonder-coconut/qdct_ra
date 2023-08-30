@@ -76,6 +76,8 @@ def simulate(qc, qc_shots):
     qc.measure(range(4),range(4))
     aer_sim = Aer.get_backend('qasm_simulator')
     counts_frqi = execute(qc,aer_sim,shots=qc_shots).result().get_counts()
+    #plot_distribution(counts_frqi)
+    #plt.show()
     return counts_frqi
 
 def frqi_decode(counts_frqi,length):
@@ -104,7 +106,7 @@ def frqi_decode(counts_frqi,length):
 
     for pixel in image_data:
         
-        n = pos_bits - 1
+        n = 1.5
         a = math.pow(2,n)*math.sqrt(pixel[0])
         b = math.pow(2,n)*math.sqrt(pixel[1])
         
@@ -123,7 +125,10 @@ def frqi_decode(counts_frqi,length):
     
     return ouptut_image
 
-theta = [0,math.pi/8,math.pi/4,math.pi/2,0,math.pi/8,math.pi/4,math.pi/2]
+theta = [math.pi/16,math.pi/8,math.pi/4,math.pi/2,math.pi/16,math.pi/8,math.pi/4,math.pi/2]
+#theta = [0,0,0,0,0,0,0,0]
+#theta = [math.pi/2,math.pi/2,math.pi/2,math.pi/2,math.pi/2,math.pi/2,math.pi/2,math.pi/2]
+#theta = [0,math.pi/8,math.pi/4,math.pi/2,0,math.pi/8,math.pi/4,math.pi/2]
 input_image = [int((angle*256*2)/math.pi) for angle in theta]
 print(input_image)
 length = 8
