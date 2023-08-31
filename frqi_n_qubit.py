@@ -147,7 +147,7 @@ def frqi_decode(counts_frqi,length):
     return ouptut_image
 
 length = int(sys.argv[1])
-shots = 65536
+shots = int(sys.argv[2])
 image = [int((i+1) * (256/length) - 1) for i in range(length)]
 print(image)
 theta = [(pixel * (math.pi/(256*2))) for pixel in image]
