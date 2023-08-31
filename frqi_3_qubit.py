@@ -106,7 +106,7 @@ def frqi_decode(counts_frqi,length):
 
     for pixel in image_data:
         
-        n = 1.5
+        n = math.log(length,2)/2
         a = math.pow(2,n)*math.sqrt(pixel[0])
         b = math.pow(2,n)*math.sqrt(pixel[1])
         
@@ -125,14 +125,11 @@ def frqi_decode(counts_frqi,length):
     
     return ouptut_image
 
-theta = [math.pi/16,math.pi/8,math.pi/4,math.pi/2,math.pi/16,math.pi/8,math.pi/4,math.pi/2]
-#theta = [0,0,0,0,0,0,0,0]
-#theta = [math.pi/2,math.pi/2,math.pi/2,math.pi/2,math.pi/2,math.pi/2,math.pi/2,math.pi/2]
-#theta = [0,math.pi/8,math.pi/4,math.pi/2,0,math.pi/8,math.pi/4,math.pi/2]
+theta = [0,math.pi/8,math.pi/7,math.pi/6,math.pi/5,math.pi/4,math.pi/3,math.pi/2]
 input_image = [int((angle*256*2)/math.pi) for angle in theta]
 print(input_image)
 length = 8
-shots = 4096
+shots = 65536
 frqi_qc = frqi(theta)
 counts = simulate(frqi_qc, shots)
 print(frqi_decode(counts,length))
