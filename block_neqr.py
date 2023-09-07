@@ -11,14 +11,16 @@ import sys
 #source scripts
 from image_parser import *
 from binary_helper import *
+from classical_dct import print_mat
 
 
 def neqr_gen_qc(img_filepath, dim):
     #image initialization
     image = get_image_pixel_array(img_filepath,dim,)
     img_test = get_image_pixel_array(img_filepath,dim)
-    #display_image(img_test,dim)
+    display_image(img_test,dim)
     #print(img_test)
+    #print_mat(img_test,dim)
 
     #simulation backend
     backendQasm = Aer.get_backend('qasm_simulator')
@@ -65,8 +67,8 @@ def neqr_gen_qc(img_filepath, dim):
     return qc
     
 def simulate(qc,dim,qc_shots=0):
-    #qc.measure(range(int(qc.width()/2)),range(int(qc.width()/2)))
-    qc.measure(range(8),range(8))
+    qc.measure(range(int(qc.width()/2)),range(int(qc.width()/2)))
+    #qc.measure(range(8),range(8))
     if(qc_shots == 0):
         qc_shots = dim*dim*9 #loss in dead pixels due to insufficient shots
     aer_sim = Aer.get_backend('aer_simulator')
@@ -84,11 +86,14 @@ def translate_to_image(counts_neqr,dim):
     #print(img_translate)
     op_filepath = f"assets/output_{dim}_neqr.png"
     write_image_to_file(img_translate,dim,op_filepath)
+    return img_translate
 
 
 img_filepath = "assets/test_8.jpg"
 dim = 8
 qc = neqr_gen_qc(img_filepath,dim)
-counts = simulate(qc,dim,0)
-
-print(counts)
+print(qc.depth())
+counts = simulate(qc,dim,1024)
+img = translate_to_image(counts,dim)
+display_image(img,dim)
+#print_mat(img,dim)

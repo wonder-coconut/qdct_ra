@@ -1,33 +1,49 @@
-from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit, Aer, transpile, execute
-from qiskit.tools.visualization import plot_histogram, plot_bloch_multivector
+from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit, transpile, Aer, execute
+from qiskit.quantum_info.operators import Operator
+from qiskit.tools.visualization import plot_distribution
 import matplotlib.pyplot as plt
 
-register_len = 1
-q0 = QuantumRegister(1,'q0')
-r1 = QuantumRegister(register_len,'r1')
-r2 = QuantumRegister(register_len,'r2')
-cr = ClassicalRegister(1,'cr')
-qc = QuantumCircuit(q0,r1,r2,cr)
+def op1():
+    q_reg = QuantumRegister(3)
+    op1 = QuantumCircuit(q_reg, name='op1')
+    op1.x(q_reg)
+    op1.h(q_reg)
+    print(op1)
 
-qc.h(0)
-qc.h(r1)
-qc.x(r2)
+    test = Operator(op1)
+    return test
 
-for i in range(register_len):
-    qc.cswap(0,i+1,i+register_len+1)
+def op2():
+    q_reg = QuantumRegister(3)
+    op2 = QuantumCircuit(q_reg, name='op2')
+    op2.h(0)
+    op2.h(1)
+    op2.h(2)
+    print(op2)
 
-qc.h(0)
-qc.measure(0,0)
+    test = Operator(op2)
+    return test
+
+def simulate(qc, qc_shots):
+
+    qc.measure(range(3),range(3))
+    aer_sim = Aer.get_backend('qasm_simulator')
+    counts_frqi = execute(qc,aer_sim,shots=qc_shots).result().get_counts()
+    plot_distribution(counts_frqi)
+    plt.show()
+    return counts_frqi   
+
+
+q_reg = QuantumRegister(3,'state')
+c_reg = ClassicalRegister(3,'measure')
+qubits = []
+for qubit in q_reg:
+    qubits.append(qubit)
+
+qc = QuantumCircuit(q_reg,c_reg)
+qc.append(op1(),qubits)
+qc.append(op2().transpose(),qubits)
+
+counts = simulate(qc,8192)
+
 print(qc)
-
-aer_sim = Aer.get_backend('aer_simulator')
-job = execute(qc,aer_sim,shots=4096)
-result_neqr = job.result()
-counts_neqr = result_neqr.get_counts()
-plot_histogram(counts_neqr)
-plt.show()
-
-#qc.save_statevector()
-#statevector= aer_sim.run(qc).result().get_statevector()
-#fig = plot_bloch_multivector(statevector)
-#plt.show()

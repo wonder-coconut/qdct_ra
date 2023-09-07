@@ -50,6 +50,9 @@ def cnry(theta,n):
             j += 1
         i += 1
     
+    cnry.draw(output = 'mpl')
+    plt.show()
+    
     cnry_inst = cnry.to_instruction()
     return cnry_inst
 
@@ -151,7 +154,6 @@ shots = int(sys.argv[2])
 image = [int((i+1) * (256/length) - 1) for i in range(length)]
 print(image)
 theta = [(pixel * (math.pi/(256*2))) for pixel in image]
-#print(theta)
 frqi_qc = frqi(theta,length)
 counts = simulate(frqi_qc,shots)
 image_op = frqi_decode(counts,length)
