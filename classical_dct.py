@@ -62,15 +62,15 @@ def get_dct_matrix(dim):
         j = 0
         while(j < dim):
             if(i == 0):
-                print('null',end='\t')
+                #print('null',end='\t')
                 temp = 1/math.sqrt(dim)
             else:
                 theta = ((2*j+1)*i)/(2*dim)
-                print(theta, end='\t')
+                #print(theta, end='\t')
                 temp = math.sqrt(2/dim)*math.cos(((2*j+1)*i*math.pi)/(2*dim))
             dct_mat[i*dim + j] = temp
             j += 1
-        print()
+        #print()
         i += 1
-    print('--------------')
+    #print('--------------')
     return dct_mat
