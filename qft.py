@@ -29,7 +29,7 @@ def qft(circuit, n):
     return circuit
 
 # Let's see how it looks:
-dim = 5
+dim = 4
 qc = QuantumCircuit(dim)
 
 #binary 5

@@ -1,4 +1,5 @@
 import math
+import cmath
 from image_parser import get_image_pixel_array,display_image, write_image_to_file
 
 def print_mat(mat,dim):
@@ -6,8 +7,9 @@ def print_mat(mat,dim):
     while(i < dim):
         j = 0
         while(j < dim):
-            if(isinstance(mat[i*dim + j],float)):
-                print('%.2f'%mat[i*dim + j], end = '\t')
+            if(isinstance(mat[i*dim + j],float) or isinstance(mat[i*dim + j],complex)):
+                #print('%.2f'%mat[i*dim + j], end = '\t')
+                print('[{:.2f}]'.format(mat[i*dim + j]),end = '\t')
             else:
                 print(mat[i*dim + j], end = '\t')
             j += 1
@@ -74,3 +76,27 @@ def get_dct_matrix(dim):
         i += 1
     #print('--------------')
     return dct_mat
+
+def get_dft_matrix(dim):
+    theta = 2*math.pi/dim
+    #omegareal = math.cos(theta)
+    #omegaimg =  math.sin(theta)
+    #omega = complex(omegareal,omegaimg)
+    #omega = cmath.exp(complex(0,2*math.pi/dim))
+    amp = 1/math.sqrt(dim)
+    #print(omega)
+    dft_mat = [0]*dim*dim
+    i = j = 0
+    while(i < dim):
+        j = 0
+        while(j < dim):
+            if(i == 0 or j == 0):
+                temp = 0
+            else:
+                temp = i * j
+            print(temp,end='\t')
+            dft_mat[i*dim + j] = cmath.exp(complex(0,temp * 2*(math.pi/dim)))
+            j += 1
+        print()
+        i += 1
+    return dft_mat                
