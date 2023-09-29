@@ -1,6 +1,7 @@
 from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit, Aer, transpile, execute
 from qiskit.tools.visualization import plot_histogram
 from qiskit.extensions import UnitaryGate
+from qiskit.circuit import Gate
 import matplotlib.pyplot as plt
 import math
 
