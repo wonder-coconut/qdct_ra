@@ -18,13 +18,24 @@ def permutation_gate(length):
             qc.x(i)
         i += 1
     
-    pi_inst = qc.to_instruction().control(1)
+    pi_inst = qc.to_gate()
     return pi_inst
 
+def circuit(length):
+
+    qc = QuantumCircuit(length)
+
+    i = 1
+    while(i < length):
+        qc.cx(0,i)
+        i += 1
+
+    pn_gate = permutation_gate(length - 1)
+    pcn_gate = pn_gate.control(1)
+    control_parameter = [*range(1,length)]
+    control_parameter = [0] + control_parameter
+    qc.append(pcn_gate,control_parameter)
+    print(qc)
+
 length = 9
-qc = QuantumCircuit(length)
-pn_gate = permutation_gate(length - 1)
-control_parameter = [0]
-control_parameter.append(*range(1,length))
-qc.append(pn_gate,control_parameter)
-print(qc)
+qc = circuit(9)
