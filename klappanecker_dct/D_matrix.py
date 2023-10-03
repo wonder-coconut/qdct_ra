@@ -1,7 +1,8 @@
 from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit, Aer, transpile, execute
-from qiskit.tools.visualization import plot_histogram
+from qiskit.tools.visualization import plot_distribution
 from qiskit.extensions import UnitaryGate
 from qiskit.circuit import Gate
+from qiskit.circuit.library.standard_gates.u import UGate
 
 import matplotlib.pyplot as plt
 import math
@@ -18,20 +19,35 @@ def d_circuit(length):
     control_reg = QuantumRegister(length - 1,'control')
     qc = QuantumCircuit(ancilla_reg,control_reg)
     
-    b_gate = get_b_gate()
-    qc.append(b_gate,[0])
+    qc.u(math.pi/2,0,-math.pi/2,0)
+    #b_gate = get_b_gate()
+    #qc.append(b_gate,[0])
 
-    b_gate_transpose = b_gate.transpose()
-    b_gate_transpose.label = 'B_trans'
-    b_control_transpose = b_gate_transpose.control(length - 1)
-
+    #b_gate_transpose = b_gate.transpose()
+    #b_gate_transpose.label = 'B_trans'
+    #b_control_transpose = b_gate_transpose.control(length - 1)
+    u_trans = UGate(math.pi/2,0,-math.pi/2).inverse()
+    u_control_trans = u_trans.control(length - 1)
 
     control_parameter = [*range(1,length)]
     control_parameter.append(0)
-    qc.append(b_control_transpose, control_parameter)
+    qc.append(u_control_trans, control_parameter)
     return qc
 
+def simulate(qc,sim_shots):
+    qc.measure_all()
+    aer_sim = Aer.get_backend('qasm_simulator')
+    job = execute(qc,aer_sim,shots = sim_shots)
+    results = job.result()
+    counts = results.get_counts()
+    plot_distribution(counts)
+    plt.show()
+
 qc = d_circuit(int(sys.argv[1]))
-print(qc)
 qc = qc.decompose()
-print(qc)
+#print(qc)
+try:
+    sys.argv[2]
+    simulate(qc,int(sys.argv[2]))
+except:
+    pass
