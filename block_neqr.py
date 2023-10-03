@@ -74,7 +74,7 @@ def simulate(qc,dim,qc_shots=0):
     aer_sim = Aer.get_backend('aer_simulator')
     job = execute(qc,aer_sim,shots=qc_shots)
     result = job.result()
-    counts = result_neqr.get_counts()
+    counts = result.get_counts()
     plot_histogram(counts)
     #plt.show()
     return counts_neqr
