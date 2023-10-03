@@ -2,8 +2,10 @@ from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit, Aer, tran
 from qiskit.tools.visualization import plot_histogram
 from qiskit.extensions import UnitaryGate
 from qiskit.circuit import Gate
+
 import matplotlib.pyplot as plt
 import math
+import sys
 
 def get_b_gate():
     coeff = 1/math.sqrt(2)
@@ -11,24 +13,25 @@ def get_b_gate():
     b_gate = UnitaryGate(b_matrix, label='B')
     return b_gate
 
-def circuit(length):
+def d_circuit(length):
     ancilla_reg = QuantumRegister(1,'ancilla')
     control_reg = QuantumRegister(length - 1,'control')
     qc = QuantumCircuit(ancilla_reg,control_reg)
     
     b_gate = get_b_gate()
-    b_trans_gate = b_gate.transpose()
-    b_trans_gate.label = 'B_trans'
-    b_control_trans = b_trans_gate.control(length - 1)
+    qc.append(b_gate,[0])
+
+    b_gate_transpose = b_gate.transpose()
+    b_gate_transpose.label = 'B_trans'
+    b_control_transpose = b_gate_transpose.control(length - 1)
+
 
     control_parameter = [*range(1,length)]
     control_parameter.append(0)
-    print(control_parameter)
-    
-    qc.append(b_gate,[0])
-    qc.append(b_control_trans, control_parameter)
-    
+    qc.append(b_control_transpose, control_parameter)
     return qc
 
-qc = circuit(5)
+qc = d_circuit(int(sys.argv[1]))
+print(qc)
+qc = qc.decompose()
 print(qc)

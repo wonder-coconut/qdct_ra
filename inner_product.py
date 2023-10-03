@@ -28,8 +28,8 @@ def simulate(qc, qc_shots):
 
     qc.measure(range(3),range(3))
     aer_sim = Aer.get_backend('qasm_simulator')
-    counts_frqi = execute(qc,aer_sim,shots=qc_shots).result().get_counts()
-    plot_distribution(counts_frqi)
+    counts = execute(qc,aer_sim,shots=qc_shots).result().get_counts()
+    plot_distribution(counts)
     plt.show()
     return counts_frqi   
 

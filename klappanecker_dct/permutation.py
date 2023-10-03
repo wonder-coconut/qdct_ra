@@ -4,6 +4,7 @@ from qiskit.circuit.library.standard_gates.x import XGate
 
 import matplotlib.pyplot as plt
 import math
+import sys
 
 def permutation_gate(length):
     qc = QuantumCircuit(length)
@@ -18,10 +19,10 @@ def permutation_gate(length):
             qc.x(i)
         i += 1
     
-    pi_inst = qc.to_gate()
+    pi_inst = qc.to_gate(label='permutation')
     return pi_inst
 
-def circuit(length):
+def pi(length):
 
     qc = QuantumCircuit(length)
 
@@ -35,7 +36,10 @@ def circuit(length):
     control_parameter = [*range(1,length)]
     control_parameter = [0] + control_parameter
     qc.append(pcn_gate,control_parameter)
-    print(qc)
 
-length = 9
-qc = circuit(9)
+    pi_gate = qc.to_gate(label='pi')
+    return qc
+
+qc = pi(int(sys.argv[1]))
+print(qc)
+#qc = qc.decompose()
