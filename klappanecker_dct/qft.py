@@ -4,12 +4,11 @@ from qiskit.circuit.library import QFT
 from qiskit.visualization import plot_distribution, plot_bloch_multivector
 import matplotlib.pyplot as plt
 
-def circuit(size):
+def qft_circuit(size):
     q_reg = QuantumRegister(size)
     qc = QuantumCircuit(q_reg)
     qc = qc.compose(QFT(size, inverse=False), q_reg)
     qc = qc.decompose()
-    print(qc)
     return qc
 
 def simulate_sv(qc):
@@ -20,6 +19,3 @@ def simulate_sv(qc):
     statevector = result.get_statevector()
     plot_bloch_multivector(statevector)
     plt.show()
-
-qc = circuit(5)
-simulate(qc)

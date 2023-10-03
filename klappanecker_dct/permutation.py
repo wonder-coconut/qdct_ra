@@ -1,5 +1,5 @@
 from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit, Aer, transpile, execute
-from qiskit.tools.visualization import plot_histogram
+from qiskit.tools.visualization import plot_distribution
 from qiskit.circuit.library.standard_gates.x import XGate
 
 import matplotlib.pyplot as plt
@@ -22,7 +22,7 @@ def permutation_gate(length):
     pi_inst = qc.to_gate(label='permutation')
     return pi_inst
 
-def pi(length):
+def pi_circuit(length):
 
     qc = QuantumCircuit(length)
 
@@ -40,6 +40,11 @@ def pi(length):
     pi_gate = qc.to_gate(label='pi')
     return qc
 
-qc = pi(int(sys.argv[1]))
-print(qc)
-#qc = qc.decompose()
+def simulate(qc,sim_shots):
+    qc.measure_all()
+    aer_sim = Aer.get_backend('qasm_simulator')
+    job = execute(qc,aer_sim,shots = sim_shots)
+    results = job.result()
+    counts = results.get_counts()
+    plot_distribution(counts)
+    plt.show()
