@@ -1,5 +1,3 @@
-#general dimension image dct gqir but meant to be used only for low dimension image (2,4,8,16)
-
 #packages
 from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit, transpile, Aer, execute
 from qiskit.tools.visualization import plot_histogram
