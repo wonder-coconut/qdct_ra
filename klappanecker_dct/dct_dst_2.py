@@ -8,6 +8,10 @@ import qiskit.quantum_info as qi
 import sys
 import math
 
+#scripts
+from C_matrix import get_C_gate
+from J_matrix import get_j_gate
+
 def qdct_2(q_size):
     q_reg = QuantumRegister(q_size)
     qc = QuantumCircuit(q_reg)
@@ -30,6 +34,22 @@ def qdct_2(q_size):
     #qft
     qc = qc.compose(QFT(q_size, inverse=False), q_reg)
     
+    #C_gate
+    C_gate = get_C_gate(q_size)
+
+    #J_gate
+    j_control_gate = UGate(math.pi/2, -math.pi/2, math.pi/2).control(q_size - 1)
+    control_parameter_j = [*range(1,q_size)]
+    control_parameter_j.append(0)
+
+    control_state = ''
+    for i in range(1,q_size):
+        control_state += '0'
+
+    j_control_gate.ctrl_state = control_state
+
+    qc.append(j_control_gate,control_parameter_j)
+
     print(qc)
 
 qdct_2(4)
