@@ -4,6 +4,7 @@ from qiskit.tools.visualization import plot_distribution
 from qiskit.circuit.library.standard_gates.u import UGate
 from qiskit.circuit.library.standard_gates.x import XGate
 from qiskit.circuit.library import QFT
+import qiskit.quantum_info as qi
 import sys
 import math
 
@@ -68,7 +69,14 @@ def qdct_1(q_size):
     qc.append(u_trans,[0])
     #end of d inv
     
-    
-    print(qc)
+    return qc
 
-qdct_1(int(sys.argv[1]))
+def sim1(qc):
+    op = qi.Operator(qc)
+    array = op.data
+    return array
+
+qc = qdct_1(int(sys.argv[1]))
+print(qc)
+arr = sim1(qc)
+print(arr)
