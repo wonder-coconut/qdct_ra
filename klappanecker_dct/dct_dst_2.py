@@ -11,6 +11,7 @@ import math
 #scripts
 from C_matrix import get_C_gate
 from J_matrix import get_j_gate
+from permutation import permutation_gate
 
 def qdct_2(q_size):
     q_reg = QuantumRegister(q_size)
@@ -20,22 +21,25 @@ def qdct_2(q_size):
     qc.h(0)
 
     #permutation
-    i = 0
-    while(i < q_size):
-        if(q_size - i - 1 > 0):
-            control_parameter_p = [*range(i + 1,q_size)]
-            control_parameter_p.append(i)
-            cnx = XGate().control(q_size - i - 1)
-            qc.append(cnx,control_parameter_p)
-        else:
-            qc.x(i)
-        i += 1
+    for i in range(1, q_size):
+        qc.cx(0,i)
     
     #qft
     qc = qc.compose(QFT(q_size, inverse=False), q_reg)
     
     #C_gate
     C_gate = get_C_gate(q_size)
+    qc.append(C_gate,[0])
+
+    #permutation
+    perm_gate = permutation_gate(q_size - 1).inverse()
+    perm_gate.label = 'P_inv'
+    perm_gate_control = perm_gate.control(1)
+    control_parameter_p = [0]
+    control_parameter_p.extend(range(1,q_size))
+    print(control_parameter_p)
+    qc.append(perm_gate_control,control_parameter_p)
+
 
     #J_gate
     j_control_gate = UGate(math.pi/2, -math.pi/2, math.pi/2).control(q_size - 1)

@@ -16,7 +16,4 @@ def get_C_gate(length):
     
     C_matrix = [[1,0],[0,omega_conj]]
     C_gate = UnitaryGate(C_matrix,label='C')
-    qc = QuantumCircuit(1)
-    qc.append(C_gate,[0])
-
-get_C_gate(int(sys.argv[1]))
+    return C_gate

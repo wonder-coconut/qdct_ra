@@ -10,7 +10,6 @@ def get_ln_gate(length):
     N = length
     theta = (2*math.pi)/(4*N)
     omega = complex(math.cos(theta), math.sin(theta))
-    ln_matrix = [[]]
     print(omega)
 
 get_ln_gate(4)

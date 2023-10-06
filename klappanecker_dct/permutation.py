@@ -18,27 +18,9 @@ def permutation_gate(length):
         else:
             qc.x(i)
         i += 1
-    
-    pi_inst = qc.to_gate(label='permutation')
-    return pi_inst
-
-def pi_circuit(length):
-
-    qc = QuantumCircuit(length)
-
-    i = 1
-    while(i < length):
-        qc.cx(0,i)
-        i += 1
-
-    pn_gate = permutation_gate(length - 1)
-    pcn_gate = pn_gate.control(1)
-    control_parameter = [*range(1,length)]
-    control_parameter = [0] + control_parameter
-    qc.append(pcn_gate,control_parameter)
-
-    pi_gate = qc.to_gate(label='pi')
-    return qc
+        
+    perm_gate = qc.to_gate(label='permutation')
+    return perm_gate
 
 def simulate(qc,sim_shots):
     qc.measure_all()
@@ -48,3 +30,5 @@ def simulate(qc,sim_shots):
     counts = results.get_counts()
     plot_distribution(counts)
     plt.show()
+
+qc = permutation_gate(4)
