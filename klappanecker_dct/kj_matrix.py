@@ -24,6 +24,3 @@ def circuit(length,index):
         kj_gate = get_kj_gate(length,i).control(1)
         qc.append(kj_gate, [0,i])
     return qc
-
-qc = circuit(4,1)
-print(qc)

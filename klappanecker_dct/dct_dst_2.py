@@ -11,6 +11,8 @@ import math
 #scripts
 from C_matrix import get_C_gate
 from J_matrix import get_j_gate
+from lj_matrix import get_lj_gate
+from kj_matrix import get_kj_gate
 from permutation import permutation_gate
 
 def qdct_2(q_size):
@@ -26,6 +28,17 @@ def qdct_2(q_size):
     
     #qft
     qc = qc.compose(QFT(q_size, inverse=False), q_reg)
+
+    #kj_gate
+    for i in range(1,q_size):
+        kj_gate = get_kj_gate(q_size,i).control(1)
+        qc.append(kj_gate,[0,i])
+    
+    #lj_gate
+    for i in range(1,q_size):
+        lj_gate = get_lj_gate(q_size,i).control(1)
+        lj_gate.ctrl_state = '0'
+        qc.append(lj_gate,[0,i])
     
     #C_gate
     C_gate = get_C_gate(q_size)
@@ -37,7 +50,6 @@ def qdct_2(q_size):
     perm_gate_control = perm_gate.control(1)
     control_parameter_p = [0]
     control_parameter_p.extend(range(1,q_size))
-    print(control_parameter_p)
     qc.append(perm_gate_control,control_parameter_p)
 
 

@@ -24,6 +24,3 @@ def circuit(length):
         lj_gate.ctrl_state = '0'
         qc.append(lj_gate, [0,i])
     return qc
-
-qc = circuit(4)
-print(qc)

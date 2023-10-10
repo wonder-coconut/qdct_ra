@@ -20,7 +20,6 @@ def j_circuit(length):
     
     control_parameter = [*range(1,length)]
     control_parameter.append(0)
-    print(control_parameter)
 
     qc.append(j_control_gate,control_parameter)
 
@@ -34,6 +33,3 @@ def simulate(qc,sim_shots):
     counts = results.get_counts()
     plot_distribution(counts)
     plt.show()
-
-qc = j_circuit(4)
-print
