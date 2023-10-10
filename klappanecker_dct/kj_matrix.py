@@ -15,7 +15,7 @@ def get_kj_gate(length, index):
     exponent = math.pow(2,index - 1)
     omega_exp = np.power(omega_conj,exponent)
     kj_matrix = [[1,0],[0,omega_exp]]
-    kj_gate = UnitaryGate(kj_matrix,label = f'L{index}')
+    kj_gate = UnitaryGate(kj_matrix,label = f'K{index}')
     return kj_gate
 
 def circuit(length,index):

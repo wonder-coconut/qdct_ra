@@ -79,7 +79,9 @@ def qdct_2(q_size):
 
     #permutation2
     qc.append(perm_gate_control,control_parameter_p)
+    
+    return qc
 
-    print(qc)
 
-qdct_2(4)
+qc = qdct_2(int(sys.argv[1]))
+print(qc)
