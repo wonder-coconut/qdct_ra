@@ -34,3 +34,6 @@ def simulate(qc,sim_shots):
     counts = results.get_counts()
     plot_distribution(counts)
     plt.show()
+
+qc = j_circuit(4)
+print
