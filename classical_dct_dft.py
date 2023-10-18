@@ -57,7 +57,25 @@ def transpose(mat,dim):
         i += 1
     return mat_res
 
-def get_dct_matrix(dim):
+def get_dct_matrix_1(dim):
+    dct_mat = [0]*dim*dim
+    i = j = 0
+    while(i < dim):
+        j = 0
+        while(j < dim):
+            if(i == 0):
+                #print('null',end='\t')
+                temp = 1/math.sqrt(dim)
+            else:
+                temp = math.sqrt(2/dim)*math.cos((j*i*math.pi)/(dim))
+            dct_mat[i*dim + j] = temp
+            j += 1
+        #print()
+        i += 1
+    #print('--------------')
+    return dct_mat
+
+def get_dct_matrix_2(dim):
     dct_mat = [0]*dim*dim
     i = j = 0
     while(i < dim):
