@@ -75,10 +75,3 @@ def print_mat(mat):
             j += 1
         print()
         i += 1
-
-if(int(sys.argv[1]) == 1):
-    mat = get_dct_mat(int(sys.argv[2]),int(sys.argv[3]))
-elif(int(sys.argv[1]) == 2):
-    mat = get_dst_mat(int(sys.argv[2]),int(sys.argv[3]))
-
-print_mat(mat)
