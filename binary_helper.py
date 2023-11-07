@@ -24,5 +24,3 @@ def binary_to_dec(s,size):
         n += int(s[i])*pow(2,size - i - 1)
         i += 1
     return n
-
-#test comment

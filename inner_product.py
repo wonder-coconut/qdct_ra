@@ -31,7 +31,7 @@ def simulate(qc, qc_shots):
     counts = execute(qc,aer_sim,shots=qc_shots).result().get_counts()
     plot_distribution(counts)
     plt.show()
-    return counts_frqi   
+    return counts  
 
 
 q_reg = QuantumRegister(3,'state')
