@@ -64,14 +64,3 @@ def get_dst_mat(transform_type, n):
         i += 1
     
     return mat_res
-
-def print_mat(mat):
-    dim = int(math.sqrt(len(mat)))
-    i = j = 0
-    while(i < dim):
-        j = 0
-        while(j < dim):
-            print('{:.2f}'.format(mat[i*dim + j]), end='\t')
-            j += 1
-        print()
-        i += 1
