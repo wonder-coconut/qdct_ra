@@ -5,6 +5,8 @@ from qiskit import QuantumCircuit, transpile, Aer, IBMQ
 from qiskit.visualization import plot_distribution, plot_bloch_multivector
 import matplotlib.pyplot as plt
 
+import qc_simulation_helper
+
 def qft_rotations(circuit, n):
     """Performs qft on the first n qubits in circuit (without swaps)"""
     if n == 0:
@@ -39,8 +41,4 @@ qc.x(2)
 qft(qc,dim)
 print(qc)
 
-aer_sim = Aer.get_backend('qasm_simulator')
-qc.save_statevector()
-statevector = aer_sim.run(qc).result().get_statevector()
-plot_bloch_multivector(statevector)
-plt.show()
+vector = qc_simulation_helper.simulate_vector(qc,1024,True)

@@ -6,6 +6,7 @@ import math
 import sys
 
 from binary_helper import binary_to_dec,decimal_to_binary
+import qc_simulation_helper
 
 def cnry(theta,n):
     theta_s = '%.2f'%theta
@@ -50,8 +51,8 @@ def cnry(theta,n):
             j += 1
         i += 1
     
-    cnry.draw(output = 'mpl')
-    plt.show()
+    #cnry.draw(output = 'mpl')
+    #plt.show()
     
     cnry_inst = cnry.to_instruction()
     return cnry_inst
@@ -94,15 +95,6 @@ def frqi(theta,length):
 
     qc.barrier()
     return qc
-
-def simulate(qc, qc_shots):
-
-    qc.measure_all()
-    aer_sim = Aer.get_backend('qasm_simulator')
-    counts_frqi = execute(qc,aer_sim,shots=qc_shots).result().get_counts()
-    #plot_distribution(counts_frqi)
-    #plt.show()
-    return counts_frqi
 
 def frqi_decode(counts_frqi,length):
 
@@ -152,9 +144,15 @@ def frqi_decode(counts_frqi,length):
 length = int(sys.argv[1])
 shots = int(sys.argv[2])
 image = [int((i+1) * (256/length) - 1) for i in range(length)]
+
 print(image)
+
 theta = [(pixel * (math.pi/(256*2))) for pixel in image]
 frqi_qc = frqi(theta,length)
-counts = simulate(frqi_qc,shots)
+vector = qc_simulation_helper.simulate_vector(frqi_qc,shots,False)
+counts = qc_simulation_helper.simulate_res(frqi_qc,shots,False)
+vector = np.asarray(vector)
+for i in vector:
+    print(i)
 image_op = frqi_decode(counts,length)
 print(image_op)

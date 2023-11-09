@@ -21,14 +21,3 @@ def permutation_gate(length):
         
     perm_gate = qc.to_gate(label='permutation')
     return perm_gate
-
-def simulate(qc,sim_shots):
-    qc.measure_all()
-    aer_sim = Aer.get_backend('qasm_simulator')
-    job = execute(qc,aer_sim,shots = sim_shots)
-    results = job.result()
-    counts = results.get_counts()
-    plot_distribution(counts)
-    plt.show()
-
-qc = permutation_gate(4)

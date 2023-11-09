@@ -2,6 +2,8 @@ from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit, Aer, tran
 from qiskit.tools.visualization import plot_histogram
 import matplotlib.pyplot as plt
 
+import qc_simulation_helper
+
 qreg = QuantumRegister(2,'test')
 creg = ClassicalRegister(2,'test_c')
 qc = QuantumCircuit(qreg,creg)
@@ -21,9 +23,4 @@ test2(qc)
 qc.measure(qreg,creg)
 print(qc)
 
-aer_sim = Aer.get_backend('aer_simulator')
-job = execute(qc,aer_sim,shots=1024)
-result = job.result()
-counts = result.get_counts()
-plot_histogram(counts)
-plt.show()
+counts = qc_simulation_helper.simulate_res(qc,1024,True)

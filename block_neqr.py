@@ -20,9 +20,6 @@ def neqr_gen_qc(img_filepath, dim):
     #print(img_test)
     #print_mat(img_test,dim)
 
-    #simulation backend
-    backendQasm = Aer.get_backend('qasm_simulator')
-
     #circuit
     pos_bits = int(math.log(dim,2))
     pixelMap = QuantumRegister(8,'pixelMap')

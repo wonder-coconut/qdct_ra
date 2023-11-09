@@ -5,6 +5,8 @@ from qiskit.circuit.library import QFT
 import matplotlib.pyplot as plt
 from math import pi
 
+import qc_simulation_helper
+
 counters = 5
 count_reg = QuantumRegister(counters,'counters')
 state_reg = QuantumRegister(1,'state')
@@ -31,9 +33,4 @@ qc = qc.compose(QFT(count_reg.size, inverse=True), count_reg)
 qc.measure(count_reg,c_reg)
 #print(qc)
 
-aer_sim = Aer.get_backend('aer_simulator')
-job = execute(qc,aer_sim,shots=4096)
-result = job.result()
-counts = result.get_counts()
-plot_histogram(counts)
-plt.show()
+counts = qc_simulation_helper.simulate_res(qc,4096,False)

@@ -5,6 +5,7 @@ import numpy as np
 import math
 
 from binary_helper import binary_to_dec
+import qc_simulation_helper
 
 def mcry(theta):
 
@@ -86,12 +87,6 @@ def improved_frqi(theta):
     qc.measure(range(3),range(3))
     return qc
 
-def simulate(qc,qc_shots):
-
-    aer_sim = Aer.get_backend('qasm_simulator')
-    counts_frqi = execute(qc,aer_sim,shots=qc_shots).result().get_counts()
-    return counts_frqi
-
 def frqi_decode(counts_frqi,shots,dim):
 
     counts = f'{counts_frqi}'
@@ -139,6 +134,6 @@ image = [int((angle*256*2)/math.pi) for angle in theta]
 shots = 16384
 print(image)
 frqi_qc = regular_frqi(theta)
-counts = simulate(frqi_qc,shots)
+counts = qc_simulation_helper.simulate_res(frqi_qc,shots,False)
 image = frqi_decode(counts,shots,2)
 print(image)
