@@ -97,8 +97,7 @@ def frqi(theta,length):
     return qc
 
 def frqi_decode(counts_frqi,length):
-    print(counts_frqi)
-    
+
     pos_bits = int(math.log(length,2))   
     counts = f'{counts_frqi}'
     counts = counts[1:len(counts)-1].split(',')
@@ -112,7 +111,7 @@ def frqi_decode(counts_frqi,length):
         state = int(binary[0])
         index = length - binary_to_dec(binary[1:pos_bits+1],pos_bits) - 1 #index reversal
         amp = int(counts[i][counts[i].rfind(':') + 1:len(counts[i])].strip())/shots
-
+        
         if(image_data[index] == 0):
             image_data[index] = {}
             image_data[index][0] = 0
@@ -142,20 +141,31 @@ def frqi_decode(counts_frqi,length):
     
     return ouptut_image
 
-length = int(sys.argv[1])
-shots = int(sys.argv[2])
-image = [int((i+1) * (256/length) - 1) for i in range(length)]
+def frqi_driver(length,shots):
+    
+    image = [int((i+1) * (256/length) - 1) for i in range(length)]
+    theta = [(pixel * (math.pi/(256*2))) for pixel in image]
+    
+    frqi_qc = frqi(theta,length)
+    print(frqi_qc)    
+    vector = qc_simulation_helper.simulate_vector(frqi_qc,shots,True)
+    counts = qc_simulation_helper.simulate_res(frqi_qc,shots,True)
+    
+    vector = np.asarray(vector)
+    for i in vector:
+        print(i)
+    
+    print(counts)
 
-print(image)
+def frqi_gate(length):
+    image = [int((i+1) * (256/length) - 1) for i in range(length)]
+    theta = [(pixel * (math.pi/(256*2))) for pixel in image]
+    
+    frqi_qc = frqi(theta,length)
+    frqi_gate = frqi_qc.to_instruction()
+    return frqi_gate
 
-theta = [(pixel * (math.pi/(256*2))) for pixel in image]
-frqi_qc = frqi(theta,length)
-print(frqi_qc)
-vector = qc_simulation_helper.simulate_vector(frqi_qc,shots,False)
-counts = qc_simulation_helper.simulate_res(frqi_qc,shots,False)
-vector = np.asarray(vector)
-for i in vector:
-    print(i)
+#qc = frqi_gate(int(sys.argv[1]))
+#print(qc)
 
-image_op = frqi_decode(counts,length)
-print(image_op)
+frqi_driver(int(sys.argv[1]),int(sys.argv[2]))
