@@ -31,12 +31,20 @@ def qc_gen(n):
     qc.append(dct(len_op),[*range(n)])
     return qc
 
+def simulate(qc,qc_shots):
+    aer_sim = Aer.get_backend('unitary_simulator')
+    job = execute(qc, aer_sim, shots=qc_shots)
+    result = job.result()
+    print(result.get_unitary(qc,3))
+
+
 qc = qc_gen(int(sys.argv[1]))
-vector = qc_simulation_helper.simulate_vector(qc,1024,False)
+#vector = qc_simulation_helper.simulate_vector(qc,1024,False)
 #counts = simulate(qc,1024)
 print(qc)
-vector = np.asarray(vector)
-for i in vector:
-    print(i)
+simulate(qc,8192)
+#vector = np.asarray(vector)
+#for i in vector:
+#    print(i)
 #plot_distribution(counts)
 #plt.show()

@@ -18,3 +18,10 @@ def simulate_vector(qc, qc_shots, showbloch):
         plot_bloch_multivector(vector)
         plt.show()
     return vector
+
+def simulate_unitary(qc,qc_shots):
+    aer_sim = Aer.get_backend('unitary_simulator')
+    job = execute(qc, aer_sim, shots=qc_shots)
+    result = job.result()
+    matrix = result.get_unitary(qc,3)
+    return matrix

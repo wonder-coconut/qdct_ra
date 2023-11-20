@@ -19,7 +19,6 @@ def print_mat(mat):
 
 def dct(n):
     op_mat = klappanecker_mat.get_klappanecker_mat(2,n)
-    print_mat(op_mat)
     op_gate = UnitaryGate(op_mat, label='dct/dst')
     return op_gate
 
@@ -78,19 +77,28 @@ def qc_gen(theta, length):
     n = 2 * pos_bits
     pos_reg = QuantumRegister(pos_bits,'position')
     phase_reg = QuantumRegister(1, 'grayscale')
-
-    qc = QuantumCircuit(pos_reg,phase_reg)
+    dct_reg = QuantumRegister(pos_bits + 1,'dct')
+    qc = QuantumCircuit(pos_reg,phase_reg,dct_reg)
     
     #qc.x(0)
     #qc.x(1)
-
-    qubits = []
+    
+    qubits_frqi = []
     for qubit in pos_reg:
-        qubits.append(qubit)
+        qubits_frqi.append(qubit)
     for qubit in phase_reg:
-        qubits.append(qubit)
+        qubits_frqi.append(qubit)
+    
+    qubits_dct = []
+    for qubit in dct_reg:
+        qubits_dct.append(qubit)
+    
+    qc.barrier()
     
     qc.h(pos_reg)
+
+    len_op = int(math.pow(2,n-2))
+    qc.append(dct(len_op),qubits_dct)
 
     pos_id = 0
 
@@ -104,7 +112,7 @@ def qc_gen(theta, length):
                 qc.x(pos_reg[pos_bits - 1 - i])
             i += 1
         
-        qc.append(cnry(angle,pos_bits),qubits)
+        qc.append(cnry(angle,pos_bits),qubits_frqi)
 
         i = 0
         while(i < pos_bits):
@@ -114,9 +122,6 @@ def qc_gen(theta, length):
         pos_id += 1
 
     qc.barrier()
-        
-    len_op = int(math.pow(2,n-2))
-    qc.append(dct(len_op),[*range(n-1)])
     return qc
 
 
@@ -128,8 +133,8 @@ qc = qc_gen(theta, length)
 vector = qc_simulation_helper.simulate_vector(qc,1024,False)
 #counts = simulate(qc,1024)
 print(qc)
-vector = np.asarray(vector)
-for i in vector:
-    print(i)
+#vector = np.asarray(vector)
+#for i in vector:
+#    print(i)
 #plot_distribution(counts)
 #plt.show()
