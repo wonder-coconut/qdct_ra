@@ -19,7 +19,7 @@ def print_mat(mat):
 
 def dct(n):
     op_mat = klappanecker_mat.get_klappanecker_mat(2,n)
-    print_mat(op_mat)
+    #print_mat(op_mat)
     op_gate = UnitaryGate(op_mat, label='dct/dst')
     return op_gate
 
@@ -28,7 +28,10 @@ def qc_gen(n):
     qc = QuantumCircuit(n)
         
     len_op = int(math.pow(2,n-1))
-    qc.append(dct(len_op),[*range(n)])
+    dct_op = dct(len_op)
+    dct_op_transpose = dct_op.transpose()
+    dct_op_transpose.label = 'dct/dst_trans'
+    qc.append(dct_op_transpose,[*range(n)])
     return qc
 
 def simulate(qc,qc_shots):

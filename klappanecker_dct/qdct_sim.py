@@ -77,8 +77,8 @@ def qc_gen(theta, length):
     n = 2 * pos_bits
     pos_reg = QuantumRegister(pos_bits,'position')
     phase_reg = QuantumRegister(1, 'grayscale')
-    dct_reg = QuantumRegister(pos_bits + 1,'dct')
-    qc = QuantumCircuit(pos_reg,phase_reg,dct_reg)
+    #dct_reg = QuantumRegister(pos_bits + 1,'dct')
+    qc = QuantumCircuit(pos_reg,phase_reg)
     
     #qc.x(0)
     #qc.x(1)
@@ -89,19 +89,17 @@ def qc_gen(theta, length):
     for qubit in phase_reg:
         qubits_frqi.append(qubit)
     
-    qubits_dct = []
-    for qubit in dct_reg:
-        qubits_dct.append(qubit)
+    #qubits_dct = []
+    #for qubit in dct_reg:
+    #    qubits_dct.append(qubit)
     
     qc.barrier()
     
     qc.h(pos_reg)
 
-    len_op = int(math.pow(2,n-2))
-    qc.append(dct(len_op),qubits_dct)
-
     pos_id = 0
 
+    #frqi
     for angle in theta:
         qc.barrier()
         pos_id_bin = decimal_to_binary(pos_id,pos_bits)
@@ -120,8 +118,18 @@ def qc_gen(theta, length):
                 qc.x(pos_reg[pos_bits - 1 - i])
             i += 1
         pos_id += 1
+    #end of frqi
 
     qc.barrier()
+
+    #dct
+    len_op = int(math.pow(2,n-2))
+    dct_op = dct(len_op)
+    dct_op_transpose = dct_op.transpose()
+    dct_op_transpose.label = 'dct/dst_trans'
+    qc.append(dct_op_transpose,qubits_frqi)
+    #end of dct
+    
     return qc
 
 
