@@ -141,8 +141,8 @@ qc = qc_gen(theta, length)
 vector = qc_simulation_helper.simulate_vector(qc,1024,False)
 #counts = simulate(qc,1024)
 print(qc)
-#vector = np.asarray(vector)
-#for i in vector:
-#    print(i)
+vector = np.asarray(vector)
+for i in vector:
+    print(i)
 #plot_distribution(counts)
 #plt.show()

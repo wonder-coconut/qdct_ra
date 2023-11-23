@@ -19,7 +19,7 @@ def print_mat(mat):
 
 def dct(n):
     op_mat = klappanecker_mat.get_klappanecker_mat(2,n)
-    #print_mat(op_mat)
+    print_mat(op_mat)
     op_gate = UnitaryGate(op_mat, label='dct/dst')
     return op_gate
 
