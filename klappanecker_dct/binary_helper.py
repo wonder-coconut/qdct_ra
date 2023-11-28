@@ -1,5 +1,4 @@
 def decimal_to_binary(num, limit):
-    length = 8
     bin_s = ''
 
     while(num > 0):

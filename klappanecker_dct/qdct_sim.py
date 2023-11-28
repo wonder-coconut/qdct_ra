@@ -5,6 +5,7 @@ import sys
 import math
 import matplotlib.pyplot as plt
 import numpy as np
+import math
 
 import klappanecker_mat
 import qc_simulation_helper
@@ -17,9 +18,21 @@ def print_mat(mat):
             print('{:.2f}'.format(j),end='\t')
         print()
 
-def dct(n):
+def dct(n,index):
+    qc_len = 3
+    qc = QuantumCircuit(qc_len)
     op_mat = klappanecker_mat.get_klappanecker_mat(2,n)
     op_gate = UnitaryGate(op_mat, label='dct/dst')
+    
+    limit = math.pow(2,n)
+    index_bin = decimal_to_binary(index,qc_len)
+    i = 0
+    while(i < qc_len):
+        if(index_bin[i] == '1'):
+            qc.x(qc_len - i - 1)
+        i += 1
+    qc.append(op_gate,[0,1,2])
+    print(qc)
     return op_gate
 
 def cnry(theta,n):
@@ -124,7 +137,7 @@ def qc_gen(theta, length):
 
     #dct
     len_op = int(math.pow(2,n-2))
-    dct_op = dct(len_op)
+    dct_op = dct(len_op,2)
     dct_op_transpose = dct_op.transpose()
     dct_op_transpose.label = 'dct/dst_trans'
     qc.append(dct_op_transpose,qubits_frqi)
@@ -134,6 +147,7 @@ def qc_gen(theta, length):
 
 
 length = int(sys.argv[1])
+#dct(length)
 image = [int((i+1) * (256/length) - 1) for i in range(length)]
 theta = [(pixel * (math.pi/(256*2))) for pixel in image]
 
